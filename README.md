@@ -19,3 +19,5 @@ payload = {
 ```
 
 You can also change the keyword and the number of pages to be scraped
+
+It is recommended to use a VPN
