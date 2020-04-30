@@ -23,8 +23,8 @@ authentication_url = 'https://m.facebook.com/login.php'
 
 # Input parameters we are going to send
 payload = {
-    'email': 'lalaland007@protonmail.com',
-    'pass': 'happybirthday'
+    'email': 'your email',
+    'pass': 'your password'
 }
 
 # Use urllib to encode the payload
@@ -38,8 +38,8 @@ regex = r"/groups/"
 resp = urllib.request.urlopen(req)
 contents = resp.read()
 # print(contents)
-q = "usa"
-url = "https://m.facebook.com/search/groups/?q="+q
+keyword = "usa"
+url = "https://m.facebook.com/search/groups/?q="+keyword
 data = requests.get(url, cookies=cj)
 soup = bs4.BeautifulSoup(data.text, 'html.parser')
 # print(soup.prettify())
