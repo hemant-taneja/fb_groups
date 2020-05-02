@@ -24,8 +24,8 @@ authentication_url = 'https://m.facebook.com/login.php'
 
 # Input parameters we are going to send
 payload = {
-    'email': 'hemanttaneja30@gmail.com',
-    'pass': 'July#))&'
+    'email': 'email',
+    'pass': 'password'
 }
 
 # Use urllib to encode the payload
