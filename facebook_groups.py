@@ -1,3 +1,4 @@
+import pandas
 import http.cookiejar
 import urllib.request
 import requests
@@ -23,8 +24,8 @@ authentication_url = 'https://m.facebook.com/login.php'
 
 # Input parameters we are going to send
 payload = {
-    'email': 'your email',
-    'pass': 'your password'
+    'email': 'hemanttaneja30@gmail.com',
+    'pass': 'July#))&'
 }
 
 # Use urllib to encode the payload
@@ -38,37 +39,64 @@ regex = r"/groups/"
 resp = urllib.request.urlopen(req)
 contents = resp.read()
 # print(contents)
-keyword = "usa"
-url = "https://m.facebook.com/search/groups/?q="+keyword
+q = "services"
+url = "https://m.facebook.com/search/groups/?q="+q
 data = requests.get(url, cookies=cj)
 soup = bs4.BeautifulSoup(data.text, 'html.parser')
 # print(soup.prettify())
 # z = 0
 # print(soup.find("div", {"id": "objects_container"})
 
-links = soup.find("div", {"id": "objects_container"}
-                  ).findAll("a", {"href": re.compile("/groups/")})
-pages = 4
 see_more = []
 group_urls = []
-for i in range(pages):
+
+count = 0
+while len(group_urls) <= 20:
     time.sleep(random.randint(1, 3))
+    links = soup.find("div", {"id": "objects_container"}).findAll(
+        "a", {"href": re.compile("/groups/")})
     for link in links:
         group_urls.append(link['href'])
     group_urls = list(set(group_urls))
     r = re.compile("https://m.facebook.com/search/groups/")
     newlist = list(filter(r.match, group_urls))
+    if len(newlist) == 0:
+        break
+    group_urls.remove(newlist[0])
     see_more.append(newlist[0])
-    # pages = soup.find("div", {"id": "see_more_pages"}).find("a")['href']
-    data = requests.get(see_more[i], cookies=cj)
+    data = requests.get(see_more[count], cookies=cj)
     soup = bs4.BeautifulSoup(data.text, 'html.parser')
-    links = soup.find("div", {"id": "objects_container"}
-                      ).findAll("a", {"href": re.compile("/groups/")})
+    links = soup.find("div", {"id": "objects_container"}).findAll(
+        "a", {"href": re.compile("/groups/")})
+    count += 1
 
-print(group_urls)
+public_groups = []
+members = []
+titles = []
+for i in group_urls:
+    data = requests.get(
+        "https://m.facebook.com/"+i, cookies=cj)
+    soup = bs4.BeautifulSoup(data.text, 'html.parser')
+    public = soup.find(
+        "h1").next_element.next_element.next_element.getText()
+    if public == "Public group":
+        print(True)
+        public_groups.append(i)
+        print(i)
+        member = soup.findAll("span", {"id": "u_0_1"})
+        print(member)
+        if len(member) == 0:
+            member.append(0)
+        else:
+            for m in member:
+                if m != None:
+                    members.append(m.text)
+                else:
+                    members.append(0)
+        title = soup.find("h1").getText()
+        titles.append(title)
 
-# for link in links:
-#     group_urls.append(link['href'])
-# group_urls.pop()
-# group_urls = list(set(group_urls))
-# print(group_urls)
+
+df = pandas.DataFrame(
+    data={"col1": group_urls, "col2": titles, "col3": members})
+df.to_csv("./file.csv", sep=',', index=False)
